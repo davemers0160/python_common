@@ -36,7 +36,7 @@ filename = "C:/Projects/data/FSK/fsk_test.yml"
 data_rate, num_bits, frame_length, amplitude, sample_rate = read_input_params(filename)
 
 #
-bit_length = 1/data_rate
+bit_length = 1.0/data_rate
 
 #
 data_length = num_bits * bit_length
