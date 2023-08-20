@@ -31,7 +31,7 @@ def read_input_params(filename):
     return fsk_params['data_rate'], fsk_params['num_bits'], fsk_params['frame_length'], fsk_params['amplitude'], fsk_params['sample_rate']
 
 
-filename = "C:/Projects/data/FSK/fsk_test.yml"
+filename = "D:/data/FSK/fsk_test.yml"
 
 data_rate, num_bits, frame_length, amplitude, sample_rate = read_input_params(filename)
 
@@ -62,7 +62,7 @@ data_flat = np.empty(2 * len(full_signal))
 data_flat[0::2] = np.real(full_signal)
 data_flat[1::2] = np.imag(full_signal)
 
-file_name = "C:/Projects/data/FSK/fsk_test.sc16"
+file_name = "D:/data/FSK/fsk_test.sc16"
 file_id = open(file_name, 'wb')
 
 np.array(data_flat, dtype=np.int16).tofile(file_id)

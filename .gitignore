@@ -45,6 +45,9 @@ pip-log.txt
 
 .idea
 
+## PyTorch Model Files
+*.pt
+
 
 ###############################################################################
 ## No Compressed Files
