@@ -69,10 +69,9 @@ lpf = create_fir_filter(fc, w)
 f_offset = center_freq/sample_rate
 bpf = lpf * np.exp(-1j * 2 * np.pi * f_offset*np.arange(n_taps))
 
-full_signal = np.concatenate((iq, sig_off))
+iq_sig = np.concatenate((iq, sig_off))
 
-full_signal = np.convolve(full_signal, np.flip(bpf), 'same')
-
+full_signal = np.convolve(iq_sig, bpf[::-1], 'same')
 
 
 data_flat = np.empty(2 * len(full_signal))

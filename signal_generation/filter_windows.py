@@ -24,12 +24,12 @@ def create_fir_filter(fc, w):
 
     for idx in range(N):
 
-        x = np.pi * fc * (idx - N / 2.0)
+        x = np.pi * (idx - N / 2.0)
 
         if (abs(idx - (N / 2.0)) < 1e-6):
-            g[idx] = w[idx + 1] * fc
+            g[idx] = w[idx] * fc
         else:
-            g[idx] = w[idx] * (math.sin(x) / x)
+            g[idx] = w[idx] * (math.sin(x * fc) / x)
 
     return g
 
