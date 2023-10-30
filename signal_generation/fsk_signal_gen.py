@@ -54,6 +54,7 @@ freq_separation = data_rate
 
 #
 data = np.random.randint(2, size=num_bits)
+data = np.array([0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1,0,1])
 
 #
 sig_off = 0.001 * amplitude * (np.random.randn(math.floor(sample_rate * buffer_length)) + 1.j * np.random.randn(math.floor(sample_rate * buffer_length)))
@@ -67,12 +68,12 @@ lpf = create_fir_filter(fc, w)
 
 #fc_rot = exp(1.0j*2.0*pi()* f_offset/sample_rate*(0:(numel(iq_bpsk)-1))).';
 f_offset = center_freq/sample_rate
-bpf = lpf * np.exp(-1j * 2 * np.pi * f_offset*np.arange(n_taps))
+bpf = lpf * np.exp(-1j * 2 * np.pi * f_offset * np.arange(0, n_taps))
 
 iq_sig = np.concatenate((iq, sig_off))
 
 full_signal = np.convolve(iq_sig, bpf[::-1], 'same')
-
+# full_signal = iq_sig
 
 data_flat = np.empty(2 * len(full_signal))
 data_flat[0::2] = np.real(full_signal)
