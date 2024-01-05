@@ -15,6 +15,7 @@ import os
 import sys
 import numpy as np
 import soundfile as sf
+import argparse
 
 from generate_fm import generate_fm
 
@@ -24,18 +25,36 @@ project_path = os.path.dirname(os.path.dirname(script_path))
 sys.path.insert(0, os.path.abspath(project_path))
 from iq_utils.binary_file_ops import write_binary_iq_data
 
-filename = 'd:/data/humpback_whale.mp3'
+# add an argument parser
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input_file", help="input audio file")
+parser.add_argument("-o", "--output_file", help="output IQ file (*.sc16)")
+parser.add_argument("-s", "--sample_rate_scale", help="number to scale audio sample rate", default=20)
+
+# Read arguments from command line
+args = parser.parse_args()
+
+if not args.input_file or not args.output_file:
+    print("no input or output file specified")
+    exit(1)
+
+filename = args.input_file
+save_filename = args.output_file
+fs_scale = args.sample_rate_scale
 # filename = 'd:/music/Metallica/Metallica - For Whom The Bell Tolls (LP Version).mp3'
 
 # this assumes that the data comes in the [-1, 1) range
 y, fs = sf.read(filename)
+
+print("Found an audio file with a sample rate: {} SPS".format(fs))
+print("RF sample rate will be: {} SPS".format(fs_scale*fs))
 
 # if the audio file is a 2-channel stereo steam then we just average the stream 
 if (y.ndim > 1):
     y = np.mean(y, axis=1)
 
 # take the audio and upsample 
-[iq, sample_rate, y2] = generate_fm(y, fs, 20*fs, 0.1)
+[iq, sample_rate, y2] = generate_fm(y, fs, fs_scale*fs, 0.1)
 
 # write the IQ data to a binary file
-write_binary_iq_data('d:/data/whale_882K.sc16', np.round(1950*iq))
+write_binary_iq_data(save_filename, np.round(1950*iq))
