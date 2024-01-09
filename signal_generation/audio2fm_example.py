@@ -30,6 +30,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input_file", help="input audio file")
 parser.add_argument("-o", "--output_file", help="output IQ file (*.sc16)")
 parser.add_argument("-s", "--sample_rate_scale", help="number to scale audio sample rate", default=20)
+parser.add_argument("-k", "--mod_factor", help="FM modulation factor. Default = 0.1", type=float, default=0.1)
 
 # Read arguments from command line
 args = parser.parse_args()
@@ -38,10 +39,11 @@ if not args.input_file or not args.output_file:
     print("no input or output file specified")
     exit(1)
 
+# input parameters
 filename = args.input_file
 save_filename = args.output_file
 fs_scale = args.sample_rate_scale
-# filename = 'd:/music/Metallica/Metallica - For Whom The Bell Tolls (LP Version).mp3'
+k = args.mod_factor
 
 # this assumes that the data comes in the [-1, 1) range
 y, fs = sf.read(filename)
@@ -53,8 +55,17 @@ print("RF sample rate will be: {} SPS".format(fs_scale*fs))
 if (y.ndim > 1):
     y = np.mean(y, axis=1)
 
+# make sure the signal is within [-1, 1)
+y_max = np.max(np.abs(y))
+if(y_max > 1):
+    y = y/y_max
+
 # take the audio and upsample 
-[iq, sample_rate, y2] = generate_fm(y, fs, fs_scale*fs, 0.1)
+print("Generating IQ file...")
+[iq, sample_rate, y2] = generate_fm(y, fs, fs_scale*fs, k)
 
 # write the IQ data to a binary file
+print("Saving IQ file...")
 write_binary_iq_data(save_filename, np.round(1950*iq))
+
+print("Complete!")
