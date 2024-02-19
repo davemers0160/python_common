@@ -11,9 +11,20 @@ def nuttall_window(N):
     a3 = 0.012604
 
     for idx in range(N):
+        w[idx] = a0 - a1 * math.cos(2.0 * np.pi * idx / (N-1)) + a2 * math.cos(4.0 * np.pi * idx / (N-1)) - a3 * math.cos(6.0 * np.pi * idx / (N-1))
+    return w
 
-        w[idx] = a0 - a1 * math.cos(2.0 * np.pi * idx / N) + a2 * math.cos(4.0 * np.pi * idx / N) - a3 * math.cos(6.0 * np.pi * idx / N)
+#-----------------------------------------------------------------------------------------------------
+def blackman_nuttall_window(N):
 
+    w = np.zeros(N)
+    a0 = 0.3635819
+    a1 = 0.4891775
+    a2 = 0.1365995
+    a3 = 0.0106411
+
+    for idx in range(N):
+        w[idx] = a0 - a1 * math.cos(2.0 * np.pi * idx / (N-1)) + a2 * math.cos(4.0 * np.pi * idx / (N-1)) - a3 * math.cos(6.0 * np.pi * idx / (N-1))
     return w
 
 #-----------------------------------------------------------------------------------------------------
