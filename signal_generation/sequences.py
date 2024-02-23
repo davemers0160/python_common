@@ -62,7 +62,7 @@ def barker_code(code_length):
         data = np.array([1, 1, -1])
     elif(code_length == 4):
         data = np.array([1, 1, -1, 1])
-    elif(code_length == 5)
+    elif(code_length == 5):
         data = np.array([1, 1, 1, -1, 1])
     elif(code_length == 7):
         data = np.array([1, 1, 1, -1, -1, 1, -1])
