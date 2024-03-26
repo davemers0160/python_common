@@ -9,6 +9,7 @@ import argparse
 
 from sequences import maximal_length_sequence
 from generate_bpsk import generate_bpsk
+from generate_qpsk import generate_qpsk
 from filter_windows import nuttall_window, create_fir_filter
 
 ## do this because the relative path doesn't work on linux without PYTHONPATH
@@ -32,6 +33,7 @@ def generate_pulse(seq, sample_rate, bit_length, pri, num_pulses):
     samples_per_pulse = sample_rate * pri
 
     pulse = generate_bpsk(seq, sample_rate, bit_length)
+    # pulse = generate_qpsk(np.array([0, 1, 1, 0, 0]), sample_rate, bit_length)
 
     # add zeros to the end of the pulse until the pri is satisfied
     pulse = np.append(pulse, np.zeros([int(samples_per_pulse - pulse.shape[0])]))
@@ -61,7 +63,7 @@ def generate_pulse(seq, sample_rate, bit_length, pri, num_pulses):
 # MAIN
 # add an argument parser
 parser = argparse.ArgumentParser()
-parser.add_argument("-i", "--input_file", help="input audio file")
+parser.add_argument("-i", "--input_file", help="input yaml file")
 parser.add_argument("-o", "--output_file", help="output IQ file (*.sc16)")
 
 # Read arguments from command line

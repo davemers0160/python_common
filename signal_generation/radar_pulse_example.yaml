@@ -1,0 +1,7 @@
+sample_rate: 1000000
+bit_length: 0.00001
+num_bits: 4
+taps: [3,2]
+amplitude: 1000
+pri: 0.001
+num_pulses: 2

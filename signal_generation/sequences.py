@@ -5,6 +5,8 @@ import math
 https://web.archive.org/web/20110806114215/http://homepage.mac.com/afj/taplist.html
 https://in.ncu.edu.tw/ncume_ee/digilogi/prbs.htm
 
+**note: subtract 1 for 0 based indexing
+
 4-bits:
 - 2 taps: [4,3]
 
