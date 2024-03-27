@@ -2,6 +2,7 @@
 
 import os
 import sys
+import math
 
 import numpy as np
 import yaml
@@ -10,6 +11,8 @@ import argparse
 from sequences import maximal_length_sequence
 from generate_bpsk import generate_bpsk
 from generate_qpsk import generate_qpsk
+from generate_oqpsk import generate_oqpsk
+
 from filter_windows import nuttall_window, create_fir_filter
 
 ## do this because the relative path doesn't work on linux without PYTHONPATH
@@ -30,16 +33,21 @@ def read_input_params(filename):
 #------------------------------------------------------------------------------
 def generate_pulse(seq, sample_rate, bit_length, pri, num_pulses):
 
-    samples_per_pulse = sample_rate * pri
+    samples_per_pulse = int(sample_rate * pri)
 
     pulse = generate_bpsk(seq, sample_rate, bit_length)
-    # pulse = generate_qpsk(np.array([0, 1, 1, 0, 0]), sample_rate, bit_length)
+    # pulse = generate_qpsk(np.random.randint(0,2,1000), sample_rate, bit_length)
+    pulse = generate_oqpsk(np.random.randint(0,2,220), sample_rate, bit_length/2)
 
     # add zeros to the end of the pulse until the pri is satisfied
-    pulse = np.append(pulse, np.zeros([int(samples_per_pulse - pulse.shape[0])]))
+    pulse_buffer = int(samples_per_pulse - pulse.shape[0])
+    if (pulse_buffer < 0):
+        pulse_buffer = 0
+
+    pulse = np.append(pulse, np.zeros([pulse_buffer]))
 
     # create the filter parameters
-    fc = (2.05/bit_length)/sample_rate
+    fc = (2.1/bit_length)/sample_rate
     num_taps = 501
 
     # create the filter
@@ -48,6 +56,7 @@ def generate_pulse(seq, sample_rate, bit_length, pri, num_pulses):
 
     # filter the pulse
     pulse_filt = np.convolve(pulse, lpf[::-1], 'same')
+    # pulse_filt = pulse
 
     # normalize the pulse
     pulse_max = np.max(np.abs(pulse_filt))

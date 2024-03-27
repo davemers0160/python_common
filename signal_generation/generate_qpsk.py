@@ -26,24 +26,26 @@ def generate_qpsk(data, sample_rate, bit_length):
     
     # this will expand the bit to fill the right number of samples
     s = np.ones([int(samples_per_bit)])
-      
+
+    v = np.sqrt(2)/2
+
     iq = np.empty(0)
     for idx in range(num_bit_pairs):
     
         num = d2[idx][0]*2 + d2[idx][1]
         
         if num == 0:
-            I = -np.sqrt(2)/2
-            Q = -np.sqrt(2)/2
+            I = -v
+            Q = -v
         elif num == 1:
-            I = -np.sqrt(2)/2
-            Q = np.sqrt(2)/2        
+            I = -v
+            Q = v
         elif num == 2:
-            I = np.sqrt(2)/2
-            Q = -np.sqrt(2)/2        
+            I = v
+            Q = -v
         elif num == 3:
-            I = np.sqrt(2)/2
-            Q = np.sqrt(2)/2    
+            I = v
+            Q = v
     
         iq = np.append(iq, (I * s) + (1j * Q * s))
     
