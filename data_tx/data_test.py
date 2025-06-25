@@ -31,7 +31,7 @@ Sxx_normalized = ((Sxx_shifted - Sxx_shifted.min()) / (Sxx_shifted.max() - Sxx_s
 spectrogram_image_array = (Sxx_normalized * 255).astype(np.uint8)
 
 #    The colormap returns RGBA values in the 0-1 range.
-color_mapped_array = cm.viridis(spectrogram_image_array)
+color_mapped_array = cm.jet(spectrogram_image_array)
 
 #    Remove the alpha channel if not needed for RGB image.
 rgb_image_array = (color_mapped_array[:, :, :3] * 255).astype(np.uint8)
