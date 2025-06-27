@@ -39,7 +39,7 @@ def create_spectrogram(iq_data, sample_rate, fft_size):
 # spectrogram_float (N x M x 1) np array(uint8)
 # rows should be time
 # cols should be frequency
-def send_data(spectrogram_float: npt.NDArray[np.uint8], file=None):
+def send_data(spectrogram_float: npt.NDArray[np.uint8], file_name=None):
 
     total_rows = spectrogram_float.shape[0]
     img_width = spectrogram_float.shape[1]
@@ -49,11 +49,11 @@ def send_data(spectrogram_float: npt.NDArray[np.uint8], file=None):
     rs = RSCodec(10)
 
     # Open the file in binary write mode ('wb')
-    if file is not None:
-        file_object = open("test_image.bin", "wb")
+    if file_name is not None:
+        file_object = open(file_name, "wb")
 
     for row_index, image_row in enumerate(spectrogram_float):
-        print(f"\nProcessing Row {row_index}:")
+        # print(f"\nProcessing Row {row_index}:")
         # Each 'row' itself is a NumPy array representing a single row of pixels
         # with dimensions (width, channels)
         flattened_image_reshape = image_row.reshape(-1)
@@ -68,7 +68,7 @@ def send_data(spectrogram_float: npt.NDArray[np.uint8], file=None):
         # Encode the data
         encoded_img_row = rs.encode(img_info)
 
-        if file is not None:
+        if file_name is not None:
             # save the data to a file
             file_object.write(encoded_img_row)
 
@@ -76,21 +76,45 @@ def send_data(spectrogram_float: npt.NDArray[np.uint8], file=None):
             # send the data using hardware
             bp = 1
 
-
-    if file is not None:
+    if file_name is not None:
         file_object.close()
 
 #------------------------------------------------------------------------------
-def receive_data(img_width, file=None):
+def receive_data(fft_size, img_width, img_height, file_name=None):
     # Initialize RSCodec with correction length (number of parity bytes)
     # adds 10 parity bytes, up to 5 lost bytes can be recovered
     rs = RSCodec(10)
 
     # Open the file in binary read mode ('wb')
-    if file is not None:
-        file_object = open("test_image.bin", "rb")
+    if file_name is not None:
+        file_object = open(file_name, "rb")
 
-    # Decode the data
-    decoded_data, _, errors = rs.decode(encoded_data)
+    spectrogram_img = np.zeros((img_height, fft_size, 3), dtype=np.uint8)
 
-    img_info2 = struct.unpack("<2H", decoded_data[0:4])
+    for idx in range(img_height):
+
+        if file_name is not None:
+            # save the data to a file
+            encoded_row = file_object.read(img_width)
+
+        else:
+            # send the data using hardware
+            bp = 1
+
+        # Decode the data
+        decoded_data, _, errors = rs.decode(encoded_row)
+
+        # get the first two 16-bit integers as the row number and total rows
+        img_info2 = struct.unpack("<2H", decoded_data[0:4])
+        img_row = img_info2[0]
+
+        # get the image row data
+        img_data = decoded_data[4:]
+
+        #reshape the data back to RGB image
+        img_data = np.reshape(img_data, (-1, 3))
+
+        # add the decoded image row to the main image
+        spectrogram_img[img_row, :] = img_data
+
+    return spectrogram_img
