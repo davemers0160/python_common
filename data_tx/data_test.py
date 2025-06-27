@@ -20,7 +20,7 @@ cv2.imshow("Original Image", spectrogram_img)
 cv2.waitKey(0)
 
 # example of slicing an image and "sending" i.e.saving the image
-save_file = 'test_spectrogram_img.data'
+save_file = 'test_spectrogram_img.dat'
 send_data(spectrogram_img, save_file)
 
 bp = 1
