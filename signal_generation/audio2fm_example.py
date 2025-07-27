@@ -17,6 +17,9 @@ import numpy as np
 import soundfile as sf
 import argparse
 
+from pathlib import Path
+import torchaudio
+
 from generate_fm import generate_fm
 
 ## do this because the relative path doesn't work on linux without PYTHONPATH
@@ -45,8 +48,20 @@ save_filename = args.output_file
 fs_scale = args.sample_rate_scale
 k = args.mod_factor
 
-# this assumes that the data comes in the [-1, 1) range
-y, fs = sf.read(filename)
+# check the file extension
+file_path = Path(filename)
+extension = file_path.suffix
+
+fs = 0
+y = []
+
+# open one or the other
+if (extension == '.mp3'):
+    # this assumes that the data comes in the [-1, 1) range
+    y, fs = sf.read(filename)
+elif (extension == '.amr'):
+    # y, fs = torchaudio.load(filename)
+    y, fs = sf.read(filename)
 
 print("Found an audio file with a sample rate: {} SPS".format(fs))
 print("RF sample rate will be: {} SPS".format(fs_scale*fs))
@@ -64,8 +79,16 @@ if(y_max > 1):
 print("Generating IQ file...")
 [iq, sample_rate, y2] = generate_fm(y, fs, fs_scale*fs, k)
 
+print("sample rate: {}".format(sample_rate))
+np.max(np.real(iq))
+np.min(np.real(iq))
+np.max(np.imag(iq))
+np.min(np.imag(iq))
+
 # write the IQ data to a binary file
 print("Saving IQ file...")
-write_binary_iq_data(save_filename, np.round(1950*iq))
+write_binary_iq_data(save_filename, np.round(2045*iq))
+
+
 
 print("Complete!")
