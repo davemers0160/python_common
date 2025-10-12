@@ -1,8 +1,8 @@
 from pycocotools.coco import COCO
 
-coco_filename = "coco_example.json"
+coco_filename = "D:/data/FLIR/images_thermal_val/coco.json"
 
-dlib_save_filename = "output.txt"
+dlib_save_filename = "D:/data/FLIR/images_thermal_val/flir_thermal_val.txt"
 coco_dataset = COCO(coco_filename)
 
 image_ids = coco_dataset.getImgIds()
