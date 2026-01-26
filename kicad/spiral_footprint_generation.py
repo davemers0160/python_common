@@ -4,7 +4,7 @@ import pcbnew
 from PyQt6.QtWidgets import (QApplication, QDialog, QVBoxLayout, QHBoxLayout, 
                              QLabel, QLineEdit, QPushButton)
 
-# exec(open('D:/Projects/python_common/kicad/spiral_footprint_generation2.py').read())
+# exec(open('D:/Projects/python_common/kicad/spiral_footprint_generation.py').read())
 
 # Unit conversion: KiCad 9 Internal Units (IU) are nanometers
 def mm_to_iu(mm):
