@@ -12,7 +12,7 @@ def read_complex_sos_coefficients(filename: str):
     data = np.genfromtxt(filename, delimiter=',', dtype=np.complex128, converters={idx: complex_converter for idx in range(6)} )
     # data = np.genfromtxt(filename, delimiter=',', dtype=np.complex128, converters={0: complex_converter} )
 
-    print(data)
+    # print(data)
     
     return data
 
@@ -21,6 +21,6 @@ def read_sos_coefficients(filename: str):
 
     data = np.loadtxt('data.csv', delimiter=',').as_type(np.float64)
     
-    print(data)
+    # print(data)
     
     return data
