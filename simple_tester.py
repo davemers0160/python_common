@@ -1,11 +1,14 @@
 import numpy as np
 import tomllib
 
-from iq_utils.read_sos_coefficients import read_complex_sos_coefficients  
+from scipy import signal
+from scipy.fft import fft, fftfreq, fftshift
+import matplotlib.pyplot as plt
 
-filename = "d:/data/RF/complex_filter_test.csv"
+from iq_utils.read_sos_coefficients import read_complex_sos_coefficients
+from iq_utils.binary_file_ops import read_binary_iq_data
 
-
+filename = "d:/Projects/data/RF/sb_test/test_coeff.csv"
 d = read_complex_sos_coefficients(filename)                               
 
 '''
@@ -36,3 +39,36 @@ complex_coeff = [ [complex(item.replace(" ", "")) for item in row] for row in ra
 complex_array = np.array(raw_coeff, dtype=np.complex128)
 
 bp = 1
+
+
+filename = "D:/Projects/data/RF/sb_test/sb_iq_frame[000].sigmf-data"
+data = read_binary_iq_data(filename)
+num_samples = data.size
+
+iq_filt = signal.sosfilt(d, data)
+sample_rate = 10e6  # 10 MHz
+
+fft_raw = fft(iq_filt)
+
+# Shift the zero-frequency component to the center
+fft_shifted = fftshift(fft_raw)
+
+# Generate frequency axis and shift it to match
+frequency_axis = fftshift(fftfreq(num_samples, d=1 / sample_rate))
+
+# Calculate magnitude in dB
+# Adding a small epsilon to avoid log10(0)
+magnitude_db = 20 * np.log10(np.abs(fft_shifted) + 1e-12)
+
+plt.figure(figsize=(12, 6))
+
+# plot the magnitude spectrum
+plt.plot(frequency_axis / 1e6, magnitude_db, color='tab:blue', linewidth=1)
+plt.title("FFT of SOS-Filtered Signal")
+plt.xlabel("Frequency (MHz)")
+plt.ylabel("Magnitude (dB)")
+plt.grid(True)
+plt.tight_layout()
+plt.show(block=True)
+
+bp = 2
