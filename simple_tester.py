@@ -80,11 +80,33 @@ with open(data_file_path, "rb") as f:
 
 print(data)
 
-str_coeff = data["filter"]["coeff"]
+filter_key = data["signal_builder"]["frame"][0]["modulation_params"][0].get("filter_params")
+
+if filter_key is not None:
+
+    if (filter_key["filter_type"] == "FT_FIR"):
+        filter_type = 0
+    elif (filter_key["filter_type"] == "FT_IIR"):
+        filter_type = 1
+    elif (filter_key["filter_type"] == "FT_RRC"):
+        filter_type = 2
+    else:
+        filter_type = 1
+
+    str_coeff = filter_key["coeff"]
+    filter_array = np.array(str_coeff, dtype=np.complex128)
+
+    filter = dict(type=filter_type, frame=0, mp_index=0, coeff=filter_array)
+
+else:
+    filter = None
+
+
+# str_coeff = data["filter"]["coeff"]
 
 # complex_coeff = [ [complex(item.replace(" ", "")) for item in row] for row in raw_coeff ]
 
-complex_array = np.array(str_coeff, dtype=np.complex128)
+# complex_array = np.array(str_coeff, dtype=np.complex128)
 
 bp = 1
 
