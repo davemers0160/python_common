@@ -40,7 +40,7 @@ except NameError:
 startpath = os.path.dirname(full_path)
 
 # load in data
-file_filter = 'IQ Files (*.csv);;All Files (*.*)'
+file_filter = 'CSV Files (*.csv);;TOML Files (*.toml);;IQ Files (*.sc16 *.fc32 *.iq *.sigmf-data);;All Files (*.*)'
 # The MATLAB code uses 'MultiSelect', 'on' but then processes a single file.
 # This implementation selects a single file for simplicity and to match the logic.
 data_file_path, _ = QFileDialog.getOpenFileName(None, 'Select File', startpath, file_filter)
@@ -54,7 +54,7 @@ data_filepath, data_file = os.path.split(data_file_path)
 
 
 # filename = "d:/Projects/data/RF/sb_test/test_coeff.csv"
-d = read_complex_sos_coefficients(data_file_path)
+# d = read_complex_sos_coefficients(data_file_path)
 
 
 filter = "filter={type=\"FT_IIR\", coeff=[[\"0.017286995+0.000000000j\", \"-0.024107483+0.000000000j\", \"0.017286995+0.000000000j\", \"1.000000000+0.000000000j\", \"-1.477907107+0.000000000j\", \"0.868917979+0.000000000j\"], \
@@ -75,12 +75,14 @@ filter = "filter={type=\"FT_IIR\", coeff=[[\"0.017286995+0.000000000j\", \"-0.02
 # filter = "filter={type=\"FT_IIR\", coeff=[[\"1+2j\", \"3+4j\"],[\"5-4j\", \"3-2j\"]]}"
 
 
-data = tomllib.loads(filter)
+with open(data_file_path, "rb") as f:
+    data = tomllib.load(f)
+
 print(data)
 
 raw_coeff = data["filter"]["coeff"]
 
-complex_coeff = [ [complex(item.replace(" ", "")) for item in row] for row in raw_coeff ]
+# complex_coeff = [ [complex(item.replace(" ", "")) for item in row] for row in raw_coeff ]
 
 complex_array = np.array(raw_coeff, dtype=np.complex128)
 
