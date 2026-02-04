@@ -3,8 +3,9 @@ import numpy as np
 #------------------------------------------------------------------------------
 # Define a function to convert the input string to a complex number
 def complex_converter(s):
-    # return complex(s.decode('utf-8').replace('i', 'j'))
-    return complex(s.replace('i', 'j'))
+    v = complex(s.decode('utf-8').replace('i', 'j'))
+    # v = complex(s.replace('i', 'j'))
+    return v
 
 #------------------------------------------------------------------------------
 def read_complex_sos_coefficients(filename: str):

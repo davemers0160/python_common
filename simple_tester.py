@@ -1,20 +1,66 @@
+import os
+import sys
 import numpy as np
 import tomllib
 
 from scipy import signal
 from scipy.fft import fft, fftfreq, fftshift
+
+import matplotlib
+matplotlib.use('Qt5Agg')
+
 import matplotlib.pyplot as plt
+
+from PyQt6.QtWidgets import QApplication, QFileDialog, QDialog, QVBoxLayout, QFormLayout, QLineEdit, QDialogButtonBox
 
 from iq_utils.read_sos_coefficients import read_complex_sos_coefficients
 from iq_utils.binary_file_ops import read_binary_iq_data
 
-filename = "d:/Projects/data/RF/sb_test/test_coeff.csv"
-d = read_complex_sos_coefficients(filename)                               
+# In Python, we create a QApplication instance to handle UI elements.
+# The QApplication does not need to be run with app.exec()
+# because the dialogs are modal and block execution themselves.
+# The app instance is garbage collected at the end of the script.
+app = QApplication(sys.argv)
+
+# format long g, format compact, clc, close all, clearvars
+# These MATLAB commands control the workspace and display. In Python,
+# scripts run in a clean environment, and print formatting is explicit.
+# np.set_printoptions can be used for more control if needed.
+
+plot_num = 1
+
+# Gets the path of the current script to use as the starting directory
+try:
+    # This works when running as a script
+    full_path = os.path.abspath(__file__)
+except NameError:
+    # Fallback for interactive environments like Jupyter
+    full_path = os.path.abspath('.')
+
+startpath = os.path.dirname(full_path)
+
+# load in data
+file_filter = 'IQ Files (*.csv);;All Files (*.*)'
+# The MATLAB code uses 'MultiSelect', 'on' but then processes a single file.
+# This implementation selects a single file for simplicity and to match the logic.
+data_file_path, _ = QFileDialog.getOpenFileName(None, 'Select File', startpath, file_filter)
+
+if not data_file_path:
+    print("No file selected. Exiting.")
+    exit(0)
+
+# fileparts() equivalent
+data_filepath, data_file = os.path.split(data_file_path)
+
+
+# filename = "d:/Projects/data/RF/sb_test/test_coeff.csv"
+d = read_complex_sos_coefficients(data_file_path)
+
+
+filter = "filter={type=\"FT_IIR\", coeff=[[\"0.017286995+0.000000000j\", \"-0.024107483+0.000000000j\", \"0.017286995+0.000000000j\", \"1.000000000+0.000000000j\", \"-1.477907107+0.000000000j\", \"0.868917979+0.000000000j\"], \
+        [\"1.000000000+0.000000000j\", \"-1.204682007+0.000000000j\", \"1.000000000+0.000000000j\", \"1.000000000+0.000000000j\", \"-1.209561054+0.000000000j\", \"0.613943971+0.000000000j\"]]}"
 
 '''
-filter = '{type="FT_IIR", coeff=[["0.017286995+0.000000000j", "-0.024107483+0.000000000j", "0.017286995+0.000000000j", "1.000000000+0.000000000j", "-1.477907107+0.000000000j", "0.868917979+0.000000000j"], \
-        ["1.000000000+0.000000000j", "-1.204682007+0.000000000j", "1.000000000+0.000000000j", "1.000000000+0.000000000j", "-1.209561054+0.000000000j", "0.613943971+0.000000000j"]]}'
-
         [1.000000000+0.000000000j, -0.570914261+0.000000000j, 1.000000000+0.000000000j, 1.000000000+0.000000000j, -0.871565079+0.000000000j, 0.336175109+0.000000000j], \
         [1.000000000+0.000000000j, 1.273774378+0.000000000j, 1.000000000+0.000000000j, 1.000000000+0.000000000j, -0.576420272+0.000000000j, 0.106546618+0.000000000j], \
         [0.984353722+0.000000000j, -1.662234672+1.054886200j, 0.419117430-0.890669877j, 1.000000000+0.000000000j, -1.662130507+1.054820095j, 0.412508097-0.876624329j], \
@@ -26,7 +72,7 @@ filter = '{type="FT_IIR", coeff=[["0.017286995+0.000000000j", "-0.024107483+0.00
         [0.968830814+0.000000000j, -1.697985828-0.933475608j, 0.519125510+0.818010911j, 1.000000000+0.000000000j, -1.697553388-0.933237872j, 0.502688644+0.792110556j]]}"
 '''
 
-filter = "filter={type=\"FT_IIR\", coeff=[[\"1+2j\", \"3+4j\"],[\"5-4j\", \"3-2j\"]]}"
+# filter = "filter={type=\"FT_IIR\", coeff=[[\"1+2j\", \"3+4j\"],[\"5-4j\", \"3-2j\"]]}"
 
 
 data = tomllib.loads(filter)
