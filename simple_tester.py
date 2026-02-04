@@ -80,11 +80,11 @@ with open(data_file_path, "rb") as f:
 
 print(data)
 
-raw_coeff = data["filter"]["coeff"]
+str_coeff = data["filter"]["coeff"]
 
 # complex_coeff = [ [complex(item.replace(" ", "")) for item in row] for row in raw_coeff ]
 
-complex_array = np.array(raw_coeff, dtype=np.complex128)
+complex_array = np.array(str_coeff, dtype=np.complex128)
 
 bp = 1
 
