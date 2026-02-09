@@ -1,4 +1,7 @@
-# exec(open('D:/Projects/python_common/kicad/spiral_footprint_generation.py').read())
+# exec(open('D:/Projects/board_design/library/kicad_plugins/spiral_generator/spiral_footprint_generation_plugin.py').read())
+#
+# requirements:
+# python -m pip install pyqt6
 
 import os
 import sys
@@ -73,6 +76,16 @@ class SpiralAction(pcbnew.ActionPlugin):
         max_r = params["Max Diameter (mm)"] / 2.0
         offset = params["Offset (mm)"]
         
+        # define the Net Name
+        board = pcbnew.GetBoard()
+        net_name = "SPIRAL"
+        net = board.FindNet(net_name)
+        
+        # create the net
+        if not net:
+            net = pcbnew.NETINFO_ITEM(board, net_name)
+            board.Add(net)
+        
         # Calculate width and spacing (Width = Spacing)
         # Total radial growth / (Total arm passes + total gaps)
         total_layers = turns * arms
@@ -83,7 +96,7 @@ class SpiralAction(pcbnew.ActionPlugin):
         footprint = pcbnew.FOOTPRINT(None)
         footprint.SetValue("Spiral")
         footprint.SetReference("A1")
-        
+
         print("Trace Width: {}\n".format(trace_width))
         
         for arm_idx in range(arms):
@@ -93,6 +106,7 @@ class SpiralAction(pcbnew.ActionPlugin):
             pad.SetAttribute(pcbnew.PAD_ATTRIB_SMD)
             pad.SetShape(pcbnew.PAD_SHAPE_CIRCLE)
             pad.SetSize(pcbnew.VECTOR2I_MM(0.9*trace_width, 0.9*trace_width))
+            pad.SetNet(net)
             
             # Position pad at the offset start point
             angle_start = (2 * math.pi / arms) * arm_idx
@@ -132,6 +146,7 @@ class SpiralAction(pcbnew.ActionPlugin):
                 segment.SetStart(prev_pos)
                 segment.SetEnd(curr_pos)
                 segment.SetLayer(pcbnew.F_Cu)
+                segment.SetNet(net)
                 footprint.Add(segment)
                 
                 prev_pos = curr_pos
@@ -139,7 +154,8 @@ class SpiralAction(pcbnew.ActionPlugin):
         # Create Keepout Areas
         # Top and Bottom layers keepout
         keepout_r = max_r + trace_width
-        for layer in [pcbnew.F_Cu, pcbnew.B_Cu]:
+        #for layer in [pcbnew.F_Cu, pcbnew.B_Cu]:
+        for layer in [pcbnew.B_Cu]:
             keepout = pcbnew.ZONE(footprint)
             keepout.SetLayer(layer)
             keepout.SetIsRuleArea(True)
