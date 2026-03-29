@@ -153,7 +153,7 @@ class SpiralAction(pcbnew.ActionPlugin):
 
         # Create Keepout Areas
         # Top and Bottom layers keepout
-        keepout_r = max_r + trace_width
+        keepout_r = max_r + trace_width/2 + 0.1
         #for layer in [pcbnew.F_Cu, pcbnew.B_Cu]:
         for layer in [pcbnew.B_Cu]:
             keepout = pcbnew.ZONE(footprint)
@@ -179,7 +179,7 @@ class SpiralAction(pcbnew.ActionPlugin):
         silk_circle.SetCenter(pcbnew.VECTOR2I(0, 0))
         
         # Circle end point defines the radius
-        silk_radius_mm = max_r + trace_width
+        silk_radius_mm = max_r + trace_width/2 + 0.1
         silk_circle.SetEnd(pcbnew.VECTOR2I(mm_to_iu(silk_radius_mm), 0))
         silk_circle.SetWidth(mm_to_iu(0.15)) # Standard silk width
         silk_circle.SetLayer(pcbnew.F_SilkS)
