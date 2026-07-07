@@ -1,0 +1,11 @@
+# Graphical User Interface
+PyQt6>=6.5.0
+
+# SPICE Simulation Engine
+PySpice>=1.5
+
+# Math and Data Manipulation
+numpy>=1.24.0
+
+# Plotting (for when you connect the PySpice output back to a chart)
+matplotlib>=3.7.0
